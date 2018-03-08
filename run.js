@@ -1,7 +1,6 @@
-const CONFIG = require("./env.json");
-const AIRTABLE_API_KEY = CONFIG.AIRTABLE_API_KEY;
-const AIRTABLE_BASE_ID = CONFIG.AIRTABLE_BASE_ID;
-const SLACK_WEBHOOK_URL = CONFIG.SLACK_WEBHOOK_URL;
+const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
+const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
+const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
 const { IncomingWebhook, WebClient } = require("@slack/client");
 const Airtable = require("airtable");
 const dateformat = require("dateformat");
