@@ -1,0 +1,10 @@
+{
+  "name": "gnaw",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@slack/client": "^3.16.0",
+    "airtable": "^0.5.2"
+  }
+}
