@@ -1,4 +1,4 @@
-import { IncomingWebhook, WebClient } from "@slack/client";
+import { IncomingWebhook } from "@slack/client";
 import dateformat from "dateformat";
 import getTasks from "../lib/getTasks";
 import base from "../lib/base";

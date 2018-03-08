@@ -1,13 +1,16 @@
 import morningCoachSummary from "./morning-coach-summary";
 import commandLineCommands from "command-line-commands";
 import formatUsage from "command-line-usage";
+import waitAndRemind from "./wait-and-remind";
 
-const validCommands = ["morning-coach-summary", null];
+const validCommands = ["morning-coach-summary", "wait-and-remind", null];
 
 const { command, argv } = commandLineCommands(validCommands);
 
 if (command == "morning-coach-summary") {
   morningCoachSummary();
+} else if (command == "wait-and-remind") {
+  waitAndRemind();
 } else {
   console.log(
     formatUsage([
