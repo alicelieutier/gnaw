@@ -6,6 +6,10 @@
   "dependencies": {
     "@slack/client": "^3.16.0",
     "airtable": "^0.5.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
+    "command-line-commands": "^2.0.1",
+    "command-line-usage": "^4.1.0",
     "dateformat": "^3.0.3"
   }
 }
