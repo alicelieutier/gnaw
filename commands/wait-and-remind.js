@@ -1,12 +1,13 @@
-import { IncomingWebhook } from "@slack/client";
+import { WebClient } from "@slack/client";
 import getTasks from "../lib/getTasks";
 import base from "../lib/base";
 const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
+const SLACK_TOKEN = process.env.SLACK_TOKEN
 
 const REMINDER_NEEDED_FORMULA =
-  "AND(DATETIME_DIFF({Start time}, NOW(), 'minutes') < 10, DATETIME_DIFF({Start time}, NOW(), 'minutes') > 0, {Visible to students?} = 1, {Reminder given?} = 0)";
+  "AND(DATETIME_DIFF({Start time}, NOW(), 'minutes') < 1000, DATETIME_DIFF({Start time}, NOW(), 'minutes') > 0, {Visible to students?} = 1, {Reminder given?} = 0)";
 
-const studentReminderHook = new IncomingWebhook(SLACK_WEBHOOK_URL);
+const slackWeb = new WebClient(SLACK_TOKEN);
 
 function makeCohortChannelLookup() {
   return new Promise((resolve, reject) => {
@@ -40,10 +41,7 @@ function waitAndRemind() {
         const message = `<!channel> (${cohorts}) ${record.get(
           "Name"
         )} starting in ${remainingTime} minutes!`;
-        studentReminderHook.send(message, (error, resp) => {
-          if (error) {
-            return console.error(error);
-          }
+        slackWeb.chat.postMessage("#botfun", message).then(() => {
           base("Tasks").update(
             record.id,
             {
@@ -56,7 +54,7 @@ function waitAndRemind() {
               console.log(`Successfully reminded of ${record.get("Name")}`);
             }
           );
-        });
+        }).catch(err => console.error(err));
       });
     });
   });
