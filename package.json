@@ -10,9 +10,21 @@
     "babel-register": "^6.26.0",
     "command-line-commands": "^2.0.1",
     "command-line-usage": "^4.1.0",
-    "dateformat": "^3.0.3"
+    "dateformat": "^3.0.3",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.0.0",
+    "prettier": "^1.11.1"
+  },
+  "scripts": {
+    "precommit": "lint-staged"
   },
   "engines": {
     "node": "9.5.0"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
