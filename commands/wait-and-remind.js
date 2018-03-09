@@ -5,26 +5,15 @@ const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
 const SLACK_TOKEN = process.env.SLACK_TOKEN;
 
 const REMINDER_NEEDED_FORMULA =
-  "AND(DATETIME_DIFF({Start time}, NOW(), 'minutes') < 1000, DATETIME_DIFF({Start time}, NOW(), 'minutes') > 0, {Visible to students?} = 1, {Reminder given?} = 0)";
+  "AND(DATETIME_DIFF({Start time}, NOW(), 'minutes') < 10, DATETIME_DIFF({Start time}, NOW(), 'minutes') > 0, {Visible to students?} = 1, {Reminder given?} = 0)";
 
 const slackWeb = new WebClient(SLACK_TOKEN);
 
-function makeCohortChannelLookup() {
-  return new Promise((resolve, reject) => {
-    base("Cohorts")
-      .select({
-        view: "Grid view"
-      })
-      .firstPage((err, records) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(records);
-      });
-  }).then(records => {
-    return id => records.find(record => record.id === id).get("Slack channel");
-  });
+async function makeCohortChannelLookup() {
+  const records = await base("Cohorts")
+    .select({ view: "Grid view" })
+    .firstPage();
+  return id => records.find(record => record.id === id).get("Slack channel");
 }
 
 async function waitAndRemind() {
