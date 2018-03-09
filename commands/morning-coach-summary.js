@@ -26,10 +26,7 @@ function createCoachingDailyUpdateMessage(handleLookup) {
         "Today's tasks:\n" +
         records
           .map(record => {
-            const coaches = formatCoachesList(
-              record.get("Coaches"),
-              handleLookup
-            );
+            const coaches = formatCoachesList(record.get("Coaches"), handleLookup);
             const startFormatted = formatStartTime(record.get("Start time"));
             return `${startFormatted}: ${coaches} runs ${record.get("Name")}`;
           })
@@ -53,8 +50,7 @@ function makeSlackHandleLookup() {
         resolve(records);
       });
   }).then(records => {
-    return id =>
-      records.find(record => record.get("User").id === id).get("Slack ID");
+    return id => records.find(record => record.get("User").id === id).get("Slack ID");
   });
 }
 
