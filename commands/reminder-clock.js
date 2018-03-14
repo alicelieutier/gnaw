@@ -25,13 +25,20 @@ const GENERATORS = [
   )
 ];
 
-async function waitAndRemind(now = +new Date(), generators = GENERATORS) {
+async function reminderClock() {
+  const currentTimestamp = +new Date();
+  console.log("No reminders as of", new Date());
+  await sendReminders(currentTimestamp, GENERATORS);
+  setTimeout(reminderClock, 60 * 1000);
+}
+
+async function sendReminders(currentTimestamp, generators) {
   if (generators.length === 0) {
     return;
   }
   const [generator, ...restGenerators] = generators;
 
-  const messages = await generator.produce(now);
+  const messages = await generator.produce(currentTimestamp);
   await messages.reduce((promise, message) => {
     return promise.then(async () => {
       await slackWeb.chat.postMessage(
@@ -43,7 +50,7 @@ async function waitAndRemind(now = +new Date(), generators = GENERATORS) {
     });
   }, Promise.resolve());
 
-  await waitAndRemind(now, restGenerators);
+  await sendReminders(currentTimestamp, restGenerators);
 }
 
-export default waitAndRemind;
+export default reminderClock;

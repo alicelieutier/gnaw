@@ -1,1 +1,1 @@
-notify: node run.js
+notify: node run.js reminder-clock
