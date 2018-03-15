@@ -6,7 +6,10 @@ const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
 
 const TODAY_FORMULA = "IS_SAME({End time}, TODAY(), 'day')";
 
-function formatCoachesList(coaches, handleLookup) {
+function formatCoachesList(record, handleLookup) {
+  if (!Array.isArray(record.get("Coaches"))) {
+    return record.get("External owner");
+  }
   return coaches
     .map(coach => {
       return `${coach.name} (<@${handleLookup(coach.id)}>)`;
