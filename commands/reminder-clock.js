@@ -27,7 +27,7 @@ const GENERATORS = [
 
 async function reminderClock() {
   const currentTimestamp = +new Date();
-  console.log("No reminders as of", new Date());
+  console.log("Polling reminders for", new Date());
   await sendReminders(currentTimestamp, GENERATORS);
   setTimeout(reminderClock, 60 * 1000);
 }
@@ -41,16 +41,23 @@ async function sendReminders(currentTimestamp, generators) {
   const messages = await generator.produce(currentTimestamp);
   await messages.reduce((promise, message) => {
     return promise.then(async () => {
-      await slackWeb.chat.postMessage(
-        "#botfun",
-        `${message.getDestination()}: ${message.getBody()}`
-      );
-      console.log("Sent: ", message.getBody());
+      await slackWeb.chat
+        .postMessage(`#${message.getDestination()}`, message.getBody())
+        .catch(err => handleMessageSendError(message))
+        .then(() => logSent(message));
       await generator.markComplete(message);
     });
   }, Promise.resolve());
 
   await sendReminders(currentTimestamp, restGenerators);
+}
+
+function handleMessageSendError(message) {
+  console.error("Could not send message to", message.getDestination());
+}
+
+function logSent(message) {
+  console.log("Sent: ", message.getBody());
 }
 
 export default reminderClock;
