@@ -2,6 +2,7 @@ import { WebClient } from "@slack/client";
 import getTasks from "../lib/getTasks";
 import base from "../lib/base";
 import StudentReminderGenerator from "../lib/message_generators/StudentReminderGenerator";
+import ArbitraryMessageGenerator from "../lib/message_generators/ArbitraryMessageGenerator";
 const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
 const SLACK_TOKEN = process.env.SLACK_TOKEN;
 
@@ -17,11 +18,21 @@ function makeCohortChannelLookup() {
   };
 }
 
+const cohortChannelLookup = makeCohortChannelLookup();
+
 const GENERATORS = [
   new StudentReminderGenerator(
     formula => getTasks(base, "Upcoming", formula),
-    makeCohortChannelLookup(),
+    cohortChannelLookup,
     recordId => base("Tasks").update(recordId, { "Reminder given?": true })
+  ),
+  new ArbitraryMessageGenerator(
+    formula =>
+      base("Messages")
+        .select({ view: "Upcoming", filterByFormula: formula })
+        .firstPage(),
+    cohortChannelLookup,
+    recordId => base("Messages").update(recordId, { "Sent?": true })
   )
 ];
 
@@ -42,7 +53,7 @@ async function sendReminders(currentTimestamp, generators) {
   await messages.reduce((promise, message) => {
     return promise.then(async () => {
       await slackWeb.chat
-        .postMessage(`#${message.getDestination()}`, message.getBody())
+        .postMessage(`#${message.getDestination()}`, message.getBody(), { link_names: true })
         .catch(err => handleMessageSendError(message))
         .then(() => logSent(message));
       await generator.markComplete(message);
