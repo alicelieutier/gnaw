@@ -10,7 +10,8 @@ function formatCoachesList(record, handleLookup) {
   if (!Array.isArray(record.get("Coaches"))) {
     return record.get("External owner");
   }
-  return coaches
+  return record
+    .get("Coaches")
     .map(coach => {
       return `${coach.name} (<@${handleLookup(coach.id)}>)`;
     })
@@ -29,7 +30,7 @@ function createCoachingDailyUpdateMessage(handleLookup) {
         "Today's tasks:\n" +
         records
           .map(record => {
-            const coaches = formatCoachesList(record.get("Coaches"), handleLookup);
+            const coaches = formatCoachesList(record, handleLookup);
             const startFormatted = formatStartTime(record.get("Start time"));
             return `${startFormatted}: ${coaches} runs ${record.get("Name")}`;
           })
