@@ -8,12 +8,12 @@ const TODAY_FORMULA = "IS_SAME({End time}, TODAY(), 'day')";
 
 function formatCoachesList(record, handleLookup) {
   if (!Array.isArray(record.get("Coaches"))) {
-    return record.get("External owner");
+    return record.get("External owner") || "*UNALLOCATED <!channel>*";
   }
   return record
     .get("Coaches")
     .map(coach => {
-      return `${coach.name} (<@${handleLookup(coach.id)}>)`;
+      return handleLookup(coach.id);
     })
     .join(", ");
 }
@@ -32,7 +32,7 @@ function createCoachingDailyUpdateMessage(handleLookup) {
           .map(record => {
             const coaches = formatCoachesList(record, handleLookup);
             const startFormatted = formatStartTime(record.get("Start time"));
-            return `${startFormatted}: ${coaches} runs ${record.get("Name")}`;
+            return `${startFormatted}: ${record.get("Name")} (${coaches})`;
           })
           .join("\n")
       );
@@ -54,7 +54,13 @@ function makeSlackHandleLookup() {
         resolve(records);
       });
   }).then(records => {
-    return id => records.find(record => record.get("User").id === id).get("Slack ID");
+    return id => {
+      const record = records.find(record => record.get("User").id === id);
+      if (record) {
+        return "<@" + record.get("Slack ID") + ">";
+      }
+      return "Unknown";
+    };
   });
 }
 
