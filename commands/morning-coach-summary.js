@@ -1,7 +1,8 @@
 import { IncomingWebhook } from "@slack/client";
-import dateformat from "dateformat";
+import moment from "moment-timezone";
 import getTasks from "../lib/getTasks";
 import base from "../lib/base";
+
 const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
 
 const TODAY_FORMULA = "IS_SAME({End time}, TODAY(), 'day')";
@@ -19,8 +20,8 @@ function formatCoachesList(record, handleLookup) {
 }
 
 function formatStartTime(dateString) {
-  const date = new Date(dateString);
-  return dateformat(date, "HH.MM");
+  const londonTime = moment.tz(dateString, "UTC"); // Airtable is 'local UTC'
+  return londonTime.format("HH.mm");
 }
 
 function createCoachingDailyUpdateMessage(handleLookup) {
@@ -68,6 +69,7 @@ function morningCoachSummary() {
   makeSlackHandleLookup().then(lookup => {
     createCoachingDailyUpdateMessage(lookup).then(message => {
       const dailyUpdateHook = new IncomingWebhook(SLACK_WEBHOOK_URL);
+      console.log(message);
       dailyUpdateHook.send(message, (error, resp) => {
         if (error) {
           return console.error(error);

@@ -1,4 +1,5 @@
 import { WebClient } from "@slack/client";
+import moment from "moment-timezone";
 import getTasks from "../lib/getTasks";
 import base from "../lib/base";
 import StudentReminderGenerator from "../lib/message_generators/StudentReminderGenerator";
@@ -36,9 +37,16 @@ const GENERATORS = [
   )
 ];
 
+function getAirtableFakeUTCTime() {
+  const tzNow = moment().tz("Europe/London");
+  const fakeUTC = tzNow.format("YYYY-MM-DDTHH:mm:ss") + "+0000";
+  return moment.tz(fakeUTC, "UTC");
+}
+
 async function reminderClock() {
-  const currentTimestamp = +new Date();
-  console.log("Polling reminders for", new Date());
+  const now = getAirtableFakeUTCTime();
+  const currentTimestamp = now.valueOf();
+  console.log("Polling reminders for", now.format("YYYY-MM-DD HH:mm:ss"));
   await sendReminders(currentTimestamp, GENERATORS);
   setTimeout(reminderClock, 60 * 1000);
 }

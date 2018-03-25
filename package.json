@@ -6,6 +6,9 @@
   "dependencies": {
     "@slack/client": "^3.16.0",
     "airtable": "^0.5.2",
+    "babel-core": "^6.26.0",
+    "babel-jest": "^22.4.1",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-register": "^6.26.0",
     "command-line-commands": "^2.0.1",
@@ -13,10 +16,9 @@
     "dateformat": "^3.0.3",
     "husky": "^0.14.3",
     "lint-staged": "^7.0.0",
+    "moment": "^2.21.0",
+    "moment-timezone": "^0.5.14",
     "prettier": "^1.11.1",
-    "babel-core": "^6.26.0",
-    "babel-jest": "^22.4.1",
-    "babel-polyfill": "^6.26.0",
     "regenerator-runtime": "^0.11.1"
   },
   "scripts": {
