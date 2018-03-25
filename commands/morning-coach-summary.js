@@ -20,7 +20,7 @@ function formatCoachesList(record, handleLookup) {
 }
 
 function formatStartTime(dateString) {
-  const londonTime = moment.tz(dateString, "UTC"); // Airtable is 'local UTC'
+  const londonTime = moment.tz(dateString, "Europe/London");
   return londonTime.format("HH.mm");
 }
 
@@ -69,7 +69,6 @@ function morningCoachSummary() {
   makeSlackHandleLookup().then(lookup => {
     createCoachingDailyUpdateMessage(lookup).then(message => {
       const dailyUpdateHook = new IncomingWebhook(SLACK_WEBHOOK_URL);
-      console.log(message);
       dailyUpdateHook.send(message, (error, resp) => {
         if (error) {
           return console.error(error);

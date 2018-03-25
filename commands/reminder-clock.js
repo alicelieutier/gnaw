@@ -37,16 +37,10 @@ const GENERATORS = [
   )
 ];
 
-function getAirtableFakeUTCTime() {
-  const tzNow = moment().tz("Europe/London");
-  const fakeUTC = tzNow.format("YYYY-MM-DDTHH:mm:ss") + "+0000";
-  return moment.tz(fakeUTC, "UTC");
-}
-
 async function reminderClock() {
-  const now = getAirtableFakeUTCTime();
+  const now = moment().tz("Europe/London");
   const currentTimestamp = now.valueOf();
-  console.log("Polling reminders for", now.format("YYYY-MM-DD HH:mm:ss"));
+  console.log("Polling reminders for", now.format());
   await sendReminders(currentTimestamp, GENERATORS);
   setTimeout(reminderClock, 60 * 1000);
 }
