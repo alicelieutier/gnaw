@@ -46,7 +46,7 @@ const GENERATORS = [
       (view, formula) => getTasks(base, view, formula),
       handleLookup
     );
-    return [new Message(message, "#botfun", id)];
+    return [new Message(message, "#coaches", id)];
   })
 ];
 
