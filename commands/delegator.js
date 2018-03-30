@@ -1,15 +1,12 @@
-import morningCoachSummary from "./morning-coach-summary";
 import commandLineCommands from "command-line-commands";
 import formatUsage from "command-line-usage";
 import reminderClock from "./reminder-clock";
 
-const validCommands = ["morning-coach-summary", "reminder-clock", null];
+const validCommands = ["reminder-clock", null];
 
 const { command, argv } = commandLineCommands(validCommands);
 
-if (command == "morning-coach-summary") {
-  morningCoachSummary();
-} else if (command == "reminder-clock") {
+if (command == "reminder-clock") {
   reminderClock();
 } else {
   console.log(
