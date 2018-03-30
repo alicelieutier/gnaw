@@ -4,6 +4,10 @@ import getTasks from "../lib/getTasks";
 import base from "../lib/base";
 import StudentReminderGenerator from "../lib/message_generators/StudentReminderGenerator";
 import ArbitraryMessageGenerator from "../lib/message_generators/ArbitraryMessageGenerator";
+import DailyGenerator from "../lib/message_generators/DailyGenerator";
+import makeSlackHandleLookup from "../lib/makeSlackHandleLookup";
+import makeCoachSummary from "../lib/makeCoachSummary";
+import Message from "../lib/Message";
 const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
 const SLACK_TOKEN = process.env.SLACK_TOKEN;
 
@@ -34,7 +38,16 @@ const GENERATORS = [
         .firstPage(),
     cohortChannelLookup,
     recordId => base("Messages").update(recordId, { "Sent?": true })
-  )
+  ),
+  new DailyGenerator(9, 0, async (timestamp, id) => {
+    const handleLookup = await makeSlackHandleLookup(base);
+    const message = await makeCoachSummary(
+      timestamp,
+      (view, formula) => getTasks(base, view, formula),
+      handleLookup
+    );
+    return [new Message(message, "#botfun", id)];
+  })
 ];
 
 async function reminderClock() {
