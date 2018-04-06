@@ -8,10 +8,11 @@ import DailyGenerator from "../lib/message_generators/DailyGenerator";
 import makeSlackHandleLookup from "../lib/makeSlackHandleLookup";
 import makeCoachSummary from "../lib/makeCoachSummary";
 import Message from "../lib/Message";
-const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
-const SLACK_TOKEN = process.env.SLACK_TOKEN;
+const STAFF_SLACK_TOKEN = process.env.STAFF_SLACK_TOKEN;
+const STUDENT_SLACK_TOKEN = process.env.STUDENT_SLACK_TOKEN;
 
-const slackWeb = new WebClient(SLACK_TOKEN);
+const staffSlackClient = new WebClient(STAFF_SLACK_TOKEN);
+const studentSlackClient = new WebClient(STUDENT_SLACK_TOKEN);
 
 function makeCohortChannelLookup() {
   const recordsPromise = base("Cohorts")
@@ -25,7 +26,7 @@ function makeCohortChannelLookup() {
 
 const cohortChannelLookup = makeCohortChannelLookup();
 
-const GENERATORS = [
+const STUDENT_GENERATORS = [
   new StudentReminderGenerator(
     formula => getTasks(base, "Upcoming", formula),
     cohortChannelLookup,
@@ -38,7 +39,10 @@ const GENERATORS = [
         .firstPage(),
     cohortChannelLookup,
     recordId => base("Messages").update(recordId, { "Sent?": true })
-  ),
+  )
+];
+
+const STAFF_GENERATORS = [
   new DailyGenerator(9, 0, async (timestamp, id) => {
     const handleLookup = await makeSlackHandleLookup(base);
     const message = await makeCoachSummary(
@@ -46,7 +50,7 @@ const GENERATORS = [
       (view, formula) => getTasks(base, view, formula),
       handleLookup
     );
-    return [new Message(message, "#coaches", id)];
+    return [new Message(message, "#botfun", id)];
   })
 ];
 
@@ -54,11 +58,12 @@ async function reminderClock() {
   const now = moment().tz("Europe/London");
   const currentTimestamp = now.valueOf();
   console.log("Polling reminders for", now.format());
-  await sendReminders(currentTimestamp, GENERATORS);
+  await sendReminders(currentTimestamp, STUDENT_GENERATORS, studentSlackClient);
+  await sendReminders(currentTimestamp, STAFF_GENERATORS, staffSlackClient);
   setTimeout(reminderClock, 60 * 1000);
 }
 
-async function sendReminders(currentTimestamp, generators) {
+async function sendReminders(currentTimestamp, generators, slackClient) {
   if (generators.length === 0) {
     return;
   }
@@ -67,7 +72,7 @@ async function sendReminders(currentTimestamp, generators) {
   const messages = await generator.produce(currentTimestamp);
   await messages.reduce((promise, message) => {
     return promise.then(async () => {
-      await slackWeb.chat
+      await slackClient.chat
         .postMessage(`#${message.getDestination()}`, message.getBody(), { link_names: true })
         .catch(err => handleMessageSendError(message))
         .then(() => logSent(message));
