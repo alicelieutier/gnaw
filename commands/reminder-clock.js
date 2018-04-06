@@ -8,11 +8,11 @@ import DailyGenerator from "../lib/message_generators/DailyGenerator";
 import makeSlackHandleLookup from "../lib/makeSlackHandleLookup";
 import makeCoachSummary from "../lib/makeCoachSummary";
 import Message from "../lib/Message";
-const STAFF_SLACK_TOKEN = process.env.STAFF_SLACK_TOKEN;
-const STUDENT_SLACK_TOKEN = process.env.STUDENT_SLACK_TOKEN;
+const SLACK_TOKEN_STAFF = process.env.SLACK_TOKEN_STAFF;
+const SLACK_TOKEN_STUDENT = process.env.SLACK_TOKEN_STUDENT;
 
-const staffSlackClient = new WebClient(STAFF_SLACK_TOKEN);
-const studentSlackClient = new WebClient(STUDENT_SLACK_TOKEN);
+const staffSlackClient = new WebClient(SLACK_TOKEN_STAFF);
+const studentSlackClient = new WebClient(SLACK_TOKEN_STUDENT);
 
 function makeCohortChannelLookup() {
   const recordsPromise = base("Cohorts")
@@ -50,7 +50,7 @@ const STAFF_GENERATORS = [
       (view, formula) => getTasks(base, view, formula),
       handleLookup
     );
-    return [new Message(message, "#botfun", id)];
+    return [new Message(message, "#coaches", id)];
   })
 ];
 
