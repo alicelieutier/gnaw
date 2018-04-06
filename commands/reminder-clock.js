@@ -8,6 +8,7 @@ import DailyGenerator from "../lib/message_generators/DailyGenerator";
 import makeSlackHandleLookup from "../lib/makeSlackHandleLookup";
 import makeCoachSummary from "../lib/makeCoachSummary";
 import Message from "../lib/Message";
+import getFloorCover from "../lib/getFloorCover";
 const SLACK_TOKEN_STAFF = process.env.SLACK_TOKEN_STAFF;
 const SLACK_TOKEN_STUDENT = process.env.SLACK_TOKEN_STUDENT;
 
@@ -43,14 +44,15 @@ const STUDENT_GENERATORS = [
 ];
 
 const STAFF_GENERATORS = [
-  new DailyGenerator(9, 0, async (timestamp, id) => {
+  new DailyGenerator(16, 34, async (timestamp, id) => {
     const handleLookup = await makeSlackHandleLookup(base);
     const message = await makeCoachSummary(
       timestamp,
       (view, formula) => getTasks(base, view, formula),
+      timestamp => getFloorCover(base, timestamp),
       handleLookup
     );
-    return [new Message(message, "#coaches", id)];
+    return [new Message(message, "#botfun", id)];
   })
 ];
 
