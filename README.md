@@ -6,7 +6,7 @@ A handy reminderbot for students and coaches alike.
 
 Check out `env.sh.example`, fill out your own, and stick it in `env.sh`
 
-To trigger a post:
+To see the usage
 
 ```
 run_with_env node run.js

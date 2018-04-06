@@ -19,10 +19,6 @@ if (command == "reminder-clock") {
         header: "Command List",
         content: [
           {
-            name: "[bold]{morning-coach-summary}",
-            description: "Sends the morning coach summary to #coaches"
-          },
-          {
             name: "[bold]{reminder-clock}",
             description: "Checks for reminders every minute and sends them"
           }
