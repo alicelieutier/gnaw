@@ -4,7 +4,7 @@ import getTasks from "../lib/getTasks";
 import base from "../lib/base";
 import StudentReminderGenerator from "../lib/message_generators/StudentReminderGenerator";
 import ArbitraryMessageGenerator from "../lib/message_generators/ArbitraryMessageGenerator";
-import DailyGenerator from "../lib/message_generators/DailyGenerator";
+import WeekdailyGenerator from "../lib/message_generators/WeekdailyGenerator";
 import makeSlackHandleLookup from "../lib/makeSlackHandleLookup";
 import makeCoachSummary from "../lib/makeCoachSummary";
 import Message from "../lib/Message";
@@ -44,7 +44,7 @@ const STUDENT_GENERATORS = [
 ];
 
 const STAFF_GENERATORS = [
-  new DailyGenerator(16, 34, async (timestamp, id) => {
+  new WeekdailyGenerator(9, 0, async (timestamp, id) => {
     const handleLookup = await makeSlackHandleLookup(base);
     const message = await makeCoachSummary(
       timestamp,
@@ -52,7 +52,7 @@ const STAFF_GENERATORS = [
       timestamp => getFloorCover(base, timestamp),
       handleLookup
     );
-    return [new Message(message, "#botfun", id)];
+    return [new Message(message, "#coaches", id)];
   })
 ];
 
