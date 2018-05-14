@@ -8,7 +8,6 @@ import WeekdailyGenerator from "../lib/message_generators/WeekdailyGenerator";
 import makeSlackHandleLookup from "../lib/makeSlackHandleLookup";
 import makeCoachSummary from "../lib/makeCoachSummary";
 import Message from "../lib/Message";
-import getFloorCover from "../lib/getFloorCover";
 const SLACK_TOKEN_STAFF = process.env.SLACK_TOKEN_STAFF;
 const SLACK_TOKEN_STUDENT = process.env.SLACK_TOKEN_STUDENT;
 
@@ -49,7 +48,6 @@ const STAFF_GENERATORS = [
     const message = await makeCoachSummary(
       timestamp,
       (view, formula) => getTasks(base, view, formula),
-      timestamp => getFloorCover(base, timestamp),
       handleLookup
     );
     return [new Message(message, "#coaches", id)];
