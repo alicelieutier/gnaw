@@ -52,7 +52,6 @@ async function sendReminders(currentTimestamp, generators, slackClient) {
   const messages = await generator.produce(currentTimestamp);
   await messages.reduce((promise, message) => {
     return promise.then(async () => {
-      console.log(`#${message.getDestination()}`, message.getBody());
       await slackClient.chat
         .postMessage(`#${message.getDestination()}`, message.getBody(), { link_names: true })
         .catch(err => handleMessageSendError(message))
@@ -61,7 +60,7 @@ async function sendReminders(currentTimestamp, generators, slackClient) {
     });
   }, Promise.resolve());
 
-  await sendReminders(currentTimestamp, restGenerators);
+  await sendReminders(currentTimestamp, restGenerators, slackClient);
 }
 
 function handleMessageSendError(message) {
