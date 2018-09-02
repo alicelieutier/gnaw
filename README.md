@@ -6,6 +6,12 @@ A handy reminderbot for students and coaches alike.
 
 Check out `env.sh.example`, fill out your own, and stick it in `env.sh`
 
+To run the tests
+
+```
+npm test
+```
+
 To see the usage
 
 ```
